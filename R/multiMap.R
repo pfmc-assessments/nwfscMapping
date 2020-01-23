@@ -1,3 +1,17 @@
+#' Make Map
+#' 
+#' todo: better document description of multiMap
+#' 
+#' @param nrows The number of rows.
+#' @param ncols The number of columns.
+#' @param lonLims The limits for Longitude.
+#' @param latLims The limits for Latitude.
+#' @param adjLonRange A logial value.
+#' @param fnc todo: document fnc argument.
+#' @param ... Arguments passed to fnc.
+#' @import graphics
+#' @importFrom stats uniroot
+#' @export
 multiMap <-
 function(nrows=1,ncols=1,lonLims,latLims,adjLonRange=TRUE,fnc,...) {
     #lonLims and latLims are matrices with each row is a panel and each column is min and max
@@ -17,8 +31,8 @@ function(nrows=1,ncols=1,lonLims,latLims,adjLonRange=TRUE,fnc,...) {
         }
         for(i in 1:numMaps) {
             diffDis <- max(dis) - dis[i]
-            lonLims[i,1] <- uniroot(function(x,lon2,lat){distance(x,lat,lon2,lat)-diffDis/2},c(-180,lonLims[i,1]),lon2=lonLims[i,1],lat=midLat[i])$root
-            lonLims[i,2] <- uniroot(function(x,lon2,lat){distance(x,lat,lon2,lat)-diffDis/2},c(0,lonLims[i,2]),lon2=lonLims[i,2],lat=midLat[i])$root
+            lonLims[i,1] <- stats::uniroot(function(x,lon2,lat){distance(x,lat,lon2,lat)-diffDis/2},c(-180,lonLims[i,1]),lon2=lonLims[i,1],lat=midLat[i])$root
+            lonLims[i,2] <- stats::uniroot(function(x,lon2,lat){distance(x,lat,lon2,lat)-diffDis/2},c(0,lonLims[i,2]),lon2=lonLims[i,2],lat=midLat[i])$root
         }
     }
     if(!adjLonRange) {
@@ -33,15 +47,15 @@ function(nrows=1,ncols=1,lonLims,latLims,adjLonRange=TRUE,fnc,...) {
         #if(!adjLonRange) latLims <- tmp
     }
     
-    par(mfrow=c(nrows,ncols))
+    graphics::par(mfrow=c(nrows,ncols))
     x <- apply(latLims,1,diff)
     x <- which(x==max(x))
     fnc(xlim=lonLims[x[1],],ylim=latLims[x[1],],...)
-    plt1 <- par()$plt
-    par(mfrow=c(nrows,ncols))
+    plt1 <- graphics::par()$plt
+    graphics::par(mfrow=c(nrows,ncols))
     for(i in 1:numMaps){
         fnc(xlim=lonLims[i,],ylim=latLims[i,],plt=NULL,...)  #use plt=NULL or plt=par()$plt so that same as first plot
-        par(plt=plt1)
+        graphics::par(plt=plt1)
     }
     invisible()
 }

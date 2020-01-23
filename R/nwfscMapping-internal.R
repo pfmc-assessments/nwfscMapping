@@ -1,13 +1,13 @@
 .addBubbles.ach <-
 function (events, type = c("perceptual", "surface", "volume"),
-    z.max = NULL, max.size = 0.8, symbol.zero = "+", symbol.fg = rgb(0,
-        0, 0, 0.6), symbol.bg = rgb(0, 0, 0, 0.3), legend.pos = "bottomleft",
+    z.max = NULL, max.size = 0.8, symbol.zero = "+", symbol.fg =grDevices::rgb(0,
+        0, 0, 0.6), symbol.bg = grDevices::rgb(0, 0, 0, 0.3), legend.pos = "bottomleft",
     legend.breaks = NULL, show.actual = FALSE, legend.type = c("nested",
         "horiz", "vert"), legend.title = "Abundance", legend.cex = 0.8,legend.title.cex=legend.cex+0.2,
     ...)
 {
     #A sligth modification from PBSmapping addBubbles to call a modified legend function (fixes an error)
-    events <- .validateEventData(events)
+    events <- PBSmapping::.validateEventData(events)
     if (is.character(events))
         stop(paste("Invalid EventData 'events'.\n", events, sep = ""))
     if (!is.element("Z", names(events)))
@@ -22,9 +22,9 @@ function (events, type = c("perceptual", "surface", "volume"),
     if (show.actual)
         legend.breaks <- signif(legend.breaks/max(legend.breaks) *
             max(events$Z, na.rm = TRUE), 3)
-    usr.xdiff <- par("usr")[2] - par("usr")[1]
-    usr.ydiff <- par("usr")[4] - par("usr")[3]
-    stand.rad <- (max.size/2)/par("pin")[1] * usr.xdiff
+    usr.xdiff <- graphics::par("usr")[2] - graphics::par("usr")[1]
+    usr.ydiff <- graphics::par("usr")[4] - graphics::par("usr")[3]
+    stand.rad <- (max.size/2)/graphics::par("pin")[1] * usr.xdiff
     events <- events[order(events$Z, decreasing = TRUE), ]
     type <- match.arg(type)
     switch(type, volume = {
@@ -39,7 +39,7 @@ function (events, type = c("perceptual", "surface", "volume"),
     })
     isZero <- unlist(lapply(events$Z, all.equal, current = 0)) ==
         "TRUE"
-    symbols(events$X[!isZero], events$Y[!isZero], circles = radii[!isZero],
+    graphics::symbols(events$X[!isZero], events$Y[!isZero], circles = radii[!isZero],
         inches = FALSE, bg = symbol.bg, fg = symbol.fg, add = TRUE)
     if (any(isZero) && (!is.logical(symbol.zero) || symbol.zero)) {
         if (is.logical(symbol.zero))
@@ -47,7 +47,7 @@ function (events, type = c("perceptual", "surface", "volume"),
         dots <- list(...)
         if (!is.null(dots$pch))
             stop("Specify 'pch' through 'symbol.zero'")
-        points(events$X[isZero], events$Y[isZero], pch = symbol.zero,
+        graphics::points(events$X[isZero], events$Y[isZero], pch = symbol.zero,
             ...)
     }
     if (!is.null(legend.pos)) {
@@ -65,12 +65,12 @@ function (radii.leg, usr.xdiff, usr.ydiff, symbol.zero, symbol.fg,
     legend.cex,legend.title.cex=legend.cex+0.2, ...)
 {
     #fixes an error in the vertical legend
-    ratio.y.x = (usr.ydiff/par("pin")[2])/(usr.xdiff/par("pin")[1])
-    gap.x <- par("cxy")[1] * legend.cex/2
-    gap.y <- par("cxy")[2] * legend.cex/2
+    ratio.y.x = (usr.ydiff/graphics::par("pin")[2])/(usr.xdiff/graphics::par("pin")[1])
+    gap.x <- graphics::par("cxy")[1] * legend.cex/2
+    gap.y <- graphics::par("cxy")[2] * legend.cex/2
     radii.leg.y <- radii.leg * ratio.y.x
-    leg.tex.w <- strwidth(legend.breaks, units = "user") * legend.cex
-    title.w = strwidth(legend.title)
+    leg.tex.w <- graphics::strwidth(legend.breaks, units = "user") * legend.cex
+    title.w = graphics::strwidth(legend.title)
     max.tex.w <- max(leg.tex.w)
     switch(legend.type, nested = {
         legend.height <- 2 * max(radii.leg.y) + 3 * gap.y
@@ -97,14 +97,14 @@ function (radii.leg, usr.xdiff, usr.ydiff, symbol.zero, symbol.fg,
         corners <- c("bottomleft", "bottomright", "topleft",
             "topright")
         if (legend.pos %in% corners) {
-            legend.loc <- switch(legend.pos, bottomleft = c(par("usr")[1] +
-                0.025 * usr.xdiff + w.adj, par("usr")[3] + 0.025 *
-                usr.ydiff + legend.height), bottomright = c(par("usr")[2] -
-                (0.025 * usr.xdiff + legend.width + w.adj), par("usr")[3] +
-                0.025 * usr.ydiff + legend.height), topleft = c(par("usr")[1] +
-                0.025 * usr.xdiff + w.adj, par("usr")[4] - 0.025 *
-                usr.ydiff), topright = c(par("usr")[2] - (0.025 *
-                usr.xdiff + legend.width + w.adj), par("usr")[4] -
+            legend.loc <- switch(legend.pos, bottomleft = c(graphics::par("usr")[1] +
+                0.025 * usr.xdiff + w.adj, graphics::par("usr")[3] + 0.025 *
+                usr.ydiff + legend.height), bottomright = c(graphics::par("usr")[2] -
+                (0.025 * usr.xdiff + legend.width + w.adj), graphics::par("usr")[3] +
+                0.025 * usr.ydiff + legend.height), topleft = c(graphics::par("usr")[1] +
+                0.025 * usr.xdiff + w.adj, graphics::par("usr")[4] - 0.025 *
+                usr.ydiff), topright = c(graphics::par("usr")[2] - (0.025 *
+                usr.xdiff + legend.width + w.adj), graphics::par("usr")[4] -
                 0.025 * usr.ydiff))
         }
     }
@@ -115,16 +115,16 @@ function (radii.leg, usr.xdiff, usr.ydiff, symbol.zero, symbol.fg,
         bb <- rev(legend.breaks)
         x.text.leg <- legend.loc[1] + max(r) + gap.x + max.tex.w
         for (i in 1:length(r)) {
-            symbols(legend.loc[1], legend.loc[2] + r[i] * ratio.y.x,
+            graphics::symbols(legend.loc[1], legend.loc[2] + r[i] * ratio.y.x,
                 circles = r[i], inches = FALSE, add = TRUE, bg = symbol.bg,
                 fg = symbol.fg)
-            lines(c(legend.loc[1], legend.loc[1] + r[1] + gap.x),
+            graphics::lines(c(legend.loc[1], legend.loc[1] + r[1] + gap.x),
                 rep(legend.loc[2] + 2 * r[i] * ratio.y.x, 2))
-            text(x.text.leg, legend.loc[2] + 2 * r[i] * ratio.y.x,
+            graphics::text(x.text.leg, legend.loc[2] + 2 * r[i] * ratio.y.x,
                 bb[i], adj = c(1, 0.5), cex = legend.cex)
         }
         x.title.leg <- legend.loc[1] - max(radii.leg) + (legend.width/2)
-        text(x.title.leg, legend.loc[2] + legend.height, legend.title,
+        graphics::text(x.title.leg, legend.loc[2] + legend.height, legend.title,
             adj = c(0.5, 0.5), cex = legend.title.cex, col = "black")
         zlab <- c(x.title.leg, legend.loc[2] + legend.height/4)
     }, horiz = {
@@ -132,12 +132,12 @@ function (radii.leg, usr.xdiff, usr.ydiff, symbol.zero, symbol.fg,
         offset <- vector()
         for (i in 1:length(radii.leg)) offset[i] <- 2 * sum(radii.leg[1:i]) -
             radii.leg[i] + (i - 1) * gap.x
-        symbols(legend.loc[1] + offset, rep(legend.loc[2], length(radii.leg)),
+        graphics::symbols(legend.loc[1] + offset, rep(legend.loc[2], length(radii.leg)),
             circles = radii.leg, inches = FALSE, bg = symbol.bg,
             fg = symbol.fg, add = TRUE)
-        text(legend.loc[1] + offset, legend.loc[2] + radii.leg.y +
+        graphics::text(legend.loc[1] + offset, legend.loc[2] + radii.leg.y +
             gap.y, legend.breaks, adj = c(0.5, 0.5), cex = legend.cex)
-        text(legend.loc[1] + legend.width/2, legend.loc[2] +
+        graphics::text(legend.loc[1] + legend.width/2, legend.loc[2] +
             legend.height - max(radii.leg.y), legend.title, adj = c(0.5,
             0.5), cex = legend.title.cex, col = "black")
         zlab <- c(legend.loc[1], legend.loc[2] - legend.height/8)
@@ -148,20 +148,20 @@ function (radii.leg, usr.xdiff, usr.ydiff, symbol.zero, symbol.fg,
         for (i in 1:length(legend.breaks)) offset[i] <- gap.y +
             2 * sum(radii.leg.y[1:i]) - radii.leg.y[i] + i *
             gap.y
-        symbols(rep(legend.loc[1], length(legend.breaks)), legend.loc[2] -
+        graphics::symbols(rep(legend.loc[1], length(legend.breaks)), legend.loc[2] -
             offset, circles = radii.leg, bg = symbol.bg, fg = symbol.fg,
             inches = FALSE, add = TRUE)
         x.text.leg <- legend.loc[1] + max(radii.leg) + gap.x +
             max.tex.w
-        text(rep(x.text.leg, length(legend.breaks)), legend.loc[2] -
+        graphics::text(rep(x.text.leg, length(legend.breaks)), legend.loc[2] -
             offset, legend.breaks, cex = legend.cex, adj = c(1,0.5), col = "black")
-        text(legend.loc[1] + legend.width/2 - max(radii.leg),
+        graphics::text(legend.loc[1] + legend.width/2 - max(radii.leg),
             legend.loc[2], legend.title, adj = c(0.5, 0.5), cex = legend.title.cex, col = "black")
         x.title.leg <- legend.loc[1] - max(radii.leg) + (legend.width/2)  #ach
         zlab <- c(x.title.leg, legend.loc[2])
     })
     if (!is.logical(symbol.zero))
-        legend(zlab[1], zlab[2], legend = "zero", pch = symbol.zero,
+        graphics::legend(zlab[1], zlab[2], legend = "zero", pch = symbol.zero,
             xjust = 0, yjust = 1, bty = "n", cex = 0.8, x.intersp = 0.5)
     invisible()
 }
