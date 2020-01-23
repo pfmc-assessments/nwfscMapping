@@ -21,8 +21,6 @@
 #' @param legendTitleCex todo: document the argument.
 #' @param ... Arguments passed to \code{plotMap}.
 #' @import graphics
-#' @importFrom grDevices gray, rgb
-#' @importFrom PBSmapping addLines, as.EventData
 #' @export
 mapBubbles <-
 function(dat,depths=NULL,plotMap=T,

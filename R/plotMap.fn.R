@@ -3,14 +3,13 @@
 #' @param dir directory where the output file will be saved
 #' @param dat data-frame of the data that has been by the PullCatch.fn
 #' @param area option are northsouth, state, inpfc, or ...
+#' @param byYear todo: document
 #' @param plotData where to plot the catch rates on the map
-#' @dopng TRUE/FALSE whether to create a png file that will be saved in the printfolder
+#' @param dopng TRUE/FALSE whether to create a png file that will be saved in the printfolder
 #'
 #' @author Chantel Wetzel
 #' @export
-
-library(ggplot2)
-library(colorRamps)
+#' @import ggplot2 colorRamps
 
 
 WestCoastMap.fn <- function(dir = NULL, dat, area = "coast", byYear = FALSE, plotData = TRUE, dopng = TRUE)  {
@@ -22,8 +21,8 @@ WestCoastMap.fn <- function(dir = NULL, dat, area = "coast", byYear = FALSE, plo
       	if(is.na(plotdir.isdir) | !plotdir.isdir){
       	  	dir.create(plotdir)
       	}
-      	if (!byYear) { png(paste0(dir, "/plots/", area, "_map.png"), height=7, width=5, units="in",res=300) }
-      	if ( byYear) { png(paste0(dir, "/plots/", area, "_map.png"), height=7, width=7, units="in",res=300) }
+      	if (!byYear) { grDevices::png(paste0(dir, "/plots/", area, "_map.png"), height=7, width=5, units="in",res=300) }
+      	if ( byYear) { grDevices::png(paste0(dir, "/plots/", area, "_map.png"), height=7, width=7, units="in",res=300) }
     }
 
 	# Get the state information to plot map
@@ -61,9 +60,9 @@ WestCoastMap.fn <- function(dir = NULL, dat, area = "coast", byYear = FALSE, plo
 
 	if(!byYear){
 	    g <- ggplot(data = west_coast) + 
-  	         geom_polygon(aes(x = long, y = lat, group = group), fill = "lemonchiffon", color = "black") + 
-  	         geom_point(data = neg, aes(x = Longitude_dd, y = Latitude_dd, color = cpue_kg_km2, size = cpue_kg_km2), pch = 1, col = "lightgrey", alpha = 0.15) +
-  	         geom_point(data = pos.cat, aes(x = Longitude_dd, y = Latitude_dd, color = cpue_kg_km2, size = cpue_kg_km2), pch = 16, alpha = 0.7) +
+  	         geom_polygon(aes_string(x = "long", y = "lat", group = "group"), fill = "lemonchiffon", color = "black") + 
+  	         geom_point(data = neg, aes_string(x = "Longitude_dd", y = "Latitude_dd", color = "cpue_kg_km2", size = "cpue_kg_km2"), pch = 1, col = "lightgrey", alpha = 0.15) +
+  	         geom_point(data = pos.cat, aes_string(x = "Longitude_dd", y = "Latitude_dd", color = "cpue_kg_km2", size = "cpue_kg_km2"), pch = 16, alpha = 0.7) +
   	         scale_size_area(max_size = 12, name = "CPUE kg/km2") +  
              scale_color_gradient2(midpoint = mid, low=color[2], mid=color[3], high=color[4], space ="Lab", name = "CPUE kg/km2") +
   	         plot_format + 
@@ -75,9 +74,9 @@ WestCoastMap.fn <- function(dir = NULL, dat, area = "coast", byYear = FALSE, plo
 
   	if(byYear){
 	    g <- ggplot(data = west_coast) + 
-  	         geom_polygon(aes(x = long, y = lat, group = group), fill = "lemonchiffon", color = "black") + 
-  	         geom_point(data = neg, aes(x = Longitude_dd, y = Latitude_dd, color = cpue_kg_km2, size = cpue_kg_km2), pch = 1, col = "lightgrey", alpha = 0.15) +
-  	         geom_point(data = pos.cat, aes(x = Longitude_dd, y = Latitude_dd, color = cpue_kg_km2, size = cpue_kg_km2), pch = 16, alpha = 0.7) +
+  	         geom_polygon(aes_string(x = "long", y = "lat", group = "group"), fill = "lemonchiffon", color = "black") + 
+  	         geom_point(data = neg, aes_string(x = "Longitude_dd", y = "Latitude_dd", color = "cpue_kg_km2", size = "cpue_kg_km2"), pch = 1, col = "lightgrey", alpha = 0.15) +
+  	         geom_point(data = pos.cat, aes_string(x = "Longitude_dd", y = "Latitude_dd", color = "cpue_kg_km2", size = "cpue_kg_km2"), pch = 16, alpha = 0.7) +
   	         scale_size_area(max_size = 12, name = "CPUE kg/km2") +  
              scale_color_gradient2(midpoint = mid, low=color[2], mid=color[3], high=color[4], space ="Lab", name = "CPUE kg/km2") +
   	         plot_format + 
@@ -89,7 +88,7 @@ WestCoastMap.fn <- function(dir = NULL, dat, area = "coast", byYear = FALSE, plo
   	}
   	print(g)
 
-	if (dopng) { dev.off()}
+	if (dopng) { grDevices::dev.off()}
 
 
     #roundDown <- function(x) 10^floor(log10(x))
