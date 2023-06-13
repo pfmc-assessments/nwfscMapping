@@ -11,7 +11,7 @@ Please install the package as follows:
 
     # Install package
     install.packages("devtools")
-    devtools::install_github("nwfsc-assess/nwfscMapping")
+    devtools::install_github("pfmc-assessments/nwfscMapping")
     # Load package
     library(nwfscMapping)
 

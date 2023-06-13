@@ -6,8 +6,8 @@ Authors@R: c(person("Allan", "Hicks", role = c("aut")),
     person(c("Kelli", "F."), "Johnson", role = c("aut", "cre"), email = "kelli.johnson@noaa.gov"))
 Description: Some NWFSC centric mapping functions for R. The original package was written by Allan Hicks.
 License: Unlimited
-URL: https://github.com/nwfsc-assess/nwfscMapping
-BugReports: https://github.com/nwfsc-assess/nwfscMapping/issues
+URL: https://github.com/pfmc-assessments/nwfscMapping
+BugReports: https://github.com/pfmc-assessments/nwfscMapping/issues
 LazyData: true
 Suggests:
 VignetteBuilder: knitr
